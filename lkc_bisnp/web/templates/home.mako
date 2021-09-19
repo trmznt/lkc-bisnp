@@ -22,7 +22,7 @@ CCTAGTGCGCAGCTTCTTTCCATCGGC	thai3_wrongcode
     <div class="form-group">
         <label for="SNPSet">SNP Set</label>
         <select class="form-control" id="SNPSet" name="SNPSet">
-            <option value="SNP-28">SNP-28</option>
+            <option value="SNP-33">SNP-33</option>
             <option value="Broad-37">Broad 37 SNPs</option>
             <option value="SNP-28+Broad">SNP-28+Broad (65 SNPs)</option>
             <option value="SNP-51">SNP-51 (HFST)</option>
