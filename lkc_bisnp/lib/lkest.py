@@ -26,18 +26,16 @@ class SNPProfile(object):
         self.groups = np.array(groups)
         self.remark = remark
         self.group2idx = list2dictidx(groups)
-        #self.pos2idx = list2dictidx(positions)
+        # self.pos2idx = list2dictidx(positions)
         # matrix keeps count of both ref and alt alleles
-        self.M = np.full(shape=( len(groups), len(positions), 2 ), fill_value=0.1)
+        self.M = np.full(shape=(len(groups), len(positions), 2), fill_value=0.1)
         self._logM = None
-
 
     def group_index(self):
         if len(self.group2idx) == 0:
             for idx, group in enumerate(self.groups):
                 self.group2idx[group] = idx
         return self.group2idx
-
 
     def add_data(self, X, Y):
 
@@ -64,18 +62,15 @@ class SNPProfile(object):
 
         return self
 
-
     @property
     def logM(self):
         if self._logM is None:
             total = np.sum(self.M, axis=2)
-            self._logM = np.log(self.M / total[:,:,None])
+            self._logM = np.log(self.M / total[:, :, None])
         return self._logM
-
 
     def group_size(self):
         return len(self.groups)
-
 
     def to_pickle(self, outfile):
         """ export this object to a pickle
@@ -85,7 +80,6 @@ class SNPProfile(object):
         # save as a pickle
 
         pickle.save(d, outfile)
-
 
     def to_dict(self):
         """ export this object to a dictionary
@@ -157,7 +151,7 @@ class MultiSegmentHaplotypeModel(object):
 
 class HaplotypeRegionProfile(object):
 
-    def __init__(code, groups, positions=None, haplotypes=None):
+    def __init__(self, code, groups, positions=None, haplotypes=None):
         self.code = code
         self.positions = positions
         self.haplotypes2idx = {}
