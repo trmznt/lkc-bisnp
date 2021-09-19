@@ -9,6 +9,7 @@ log = logging.getLogger(__name__)
 
 _CLASSIFIERS_ = {}
 
+
 def set_classifiers(classifiers):
 
     global CLASSIFIERS
@@ -22,12 +23,12 @@ def get_classifiers():
 def init_classifiers(profilepath):
 
     with open(profilepath, 'rb') as f:
-        profile_data = pickle.load( f )
+        profile_data = pickle.load(f)
 
     _classifiers_ = get_classifiers()
 
     for code in profile_data:
-        profile = SNPProfile.from_dict( profile_data[code] )
+        profile = SNPProfile.from_dict(profile_data[code])
         _classifiers_[code] = SNPLikelihoodEstimator(profile)
 
     log.info('Classifiers initialized from profile {}'.format(profilepath))
@@ -47,7 +48,7 @@ def prepare_data(datalines, snpset):
 
         if len(barcode) != len(positions):
             logs.append(
-                'Sample {} had incorrect {} SNPs instead of the required {} SNPs'.format(
+                f'Sample {} had incorrect {} SNPs instead of the required {} SNPs'.format(
                         sample_id, len(barcode), len(positions))
             )
             continue
@@ -68,10 +69,10 @@ def prepare_data(datalines, snpset):
             else:
                 haplotype.append(1)
                 mask += 1
-        sample_ids.append( sample_id)
-        haplotypes.append( haplotype )
+        sample_ids.append(sample_id)
+        haplotypes.append(haplotype)
         if mask > 0:
-            logs.append( 'Sample {} was masked for {} SNPs'.format( sample_id, masks) )
+            logs.append(f'Sample {sample_id} was masked for {mask} SNPs')
 
     haplotypes = numpy.array(haplotypes, dtype=numpy.int8)
     return (haplotypes, sample_ids, logs)
@@ -80,4 +81,4 @@ def prepare_data(datalines, snpset):
 def classify(haplotypes):
     pass
 
-
+# EOF
