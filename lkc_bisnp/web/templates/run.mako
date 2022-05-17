@@ -5,7 +5,7 @@
 <table class='table table-striped table-sm'>
 
 	<thead class='thead-dark'>
-		<tr><th>Sample</th><th>1st Prediction</th><th>2nd Prediction</th><th>3rd Prediction</th></tr>
+		<tr><th>Sample</th><th>1st Prediction</th><th>2nd Prediction</th><th>3rd Prediction</th><th>Note</th></tr>
 	</thead>
 
 	<tbody>

@@ -1,5 +1,5 @@
 from pyramid.config import Configurator
-from lkc_bisnp.lib import classifier
+from lkc_bisnp.web.lib.utils import init_classifiers
 
 def main(global_config, **settings):
     """ This function returns a Pyramid WSGI application.
@@ -11,6 +11,8 @@ def main(global_config, **settings):
 
     # prepares the classifiers
 
-    classifier.init_classifiers( config.registry.settings['vvggeo.profiles'])
+    init_classifiers(config.registry.settings['vvggeo.datadir'])
 
     return config.make_wsgi_app()
+
+# EOF

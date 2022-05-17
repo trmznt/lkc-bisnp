@@ -9,27 +9,21 @@
     <div class="form-group">
         <label for="BarcodeData">Please enter the data with the following format: SNP_Barcode&lt;tab&gt;Sample_ID</label>
         <textarea class="form-control rounded-0" id="BarcodeData" name="BarcodeData" rows="10" style="font-family: 'Cousine', monospace;">
-CATAGTGCAGAATCTGCTTTCCATCCGA	cambodia1
-TCTGGTGCAGAATCTGTTTTCCATGGGA	thai1
-CCTAGTGCAGCAGCTTCTTTCCATCGGC	thai2
-TCTGTTGCAAAATCTGTCCTTCTTCCGA	PNG1
-TCGAGTGCAGCATCTGCTTCCATTCCGA	india1
-CATAGXGCAGAAXCTGCTXTCCAXCCGX	cambodia1_miss5
-CCTAGTGCGCAGCTTCTTTCCATCGGC	thai3_wrongcode
+CGGTTAATTACCGGGGGCACGGCCTGCTGCGCA	Colombia-1
+CGTTTAGGTTTCGTGGGCACGGCCAGCAGCGTT	Myanmar-1
+TAGCTGGATCGTTGAGGTCGAGTCAGCAGCGCT	Mismatch_Barcode
+CGGCTAATTACCGTGGCACGGCCTGCATCGCA	Wrong_BarcodeLength
         </textarea>
     </div>
 
     <div class="form-group">
-        <label for="SNPSet">SNP Set</label>
-        <select class="form-control" id="SNPSet" name="SNPSet">
-            <option value="SNP-33">SNP-33</option>
-            <option value="Broad-37">Broad 37 SNPs</option>
-            <option value="SNP-28+Broad">SNP-28+Broad (65 SNPs)</option>
-            <option value="SNP-51">SNP-51 (HFST)</option>
-            <option value="SNP-50">SNP-50 (DecisionTree)</option>
+        <label for="Classifier">Classifier</label>
+        <select class="form-control" id="Classifier" name="Classifier">
+            <option value="0">Biallele Likelihood with SNP-33</option>
+            <option value="1">Biallele Likelihood with 72 SNPs (31 GEO + 41 VN Antwerp)</option>
+            <option value="2">BernoulliNB with Broad-37 SNPs (hets treated as missing SNPs)</option>
         </select>
     </div>
-
 
     <button type="submit" class="btn btn-primary">Run classifier</button>
 

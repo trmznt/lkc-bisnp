@@ -10,6 +10,9 @@ with open(os.path.join(here, 'CHANGES.md')) as f:
 
 requires = [
     'numpy',
+    'pandas',
+    'sklearn',
+    'seaborn',
 ]
 
 web_requires = [
@@ -53,5 +56,9 @@ setup(
         'paste.app_factory': [
             'main = lkc_bisnp.web:main',
         ],
+        'console_scripts': [
+            'lkc_bisnp-run = lkc_bisnp.scripts.run:main',
+        ],
     },
 )
+
