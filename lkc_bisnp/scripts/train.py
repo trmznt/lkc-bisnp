@@ -1,73 +1,56 @@
-#!/usr/bin/env spcli
 
-from seqpy import cout, cerr, cexit, gzopen
-from seqpy.cmds import arg_parser
-from seqpy.core.bioio import naltparser
-from lkc_bisnp.lib import lkest
-
-import pickle
-
-def init_argparser(p = None):
-
-    if p is None:
-        p = arg_parser('classify.py - classify samples based on SNP barcodes')
+import argparse
+import numpy as np
+import pandas as pd
+import joblib as jlib
+from lkc_bisnp.lib.utils import cerr
+from lkc_bisnp.lib.reader import GenotypeVectorizer, read_barcode
+from lkc_bisnp.lib.classifier import BialleleLK
 
 
-    p = naltparser.init_argparser(p)
+def init_argparser(p=None):
 
-    p.add_argument('--profile', default=None, required=True)
-    p.add_argument('--includepos', default=None, required=True)
-    p.add_argument('--code', default=None, required=True)
-    p.add_argument('--remark', default=None, required=True)
-    p.add_argument('--replace', default=False, action='store_true')
-    p.add_argument('--update', default=False, action='store_true')
+    if not p:
+        p = argparse.ArgumentParser('train.py')
 
+    p.add_argument('--posfile', required=True)
+    p.add_argument('--classfile', default=None)
+    p.add_argument('-o', '--outfile', default='classifier.joblib.gz')
+    p.add_argument('infile')
     return p
 
 
-def train( args ):
-
-    # load profiles if exists
-
-    nalt_parser = naltparser.NAltLineParser(args, datatype='nalt')
-
-    nalt_parser.parse_grouping()
-    group_keys = nalt_parser.group_parser.group_keys
-
-    region = nalt_parser.parse_whole()
-    samples = nalt_parser.parse_samples()
-
-    poslines = [ line.split() for line in open(args.includepos) ][1:]
-    region.filter_poslines(poslines, inplace=True, sort_position=False)
-    haplotypes = region.haplotypes()
-
-    #import IPython; IPython.embed()
-
-    cerr('[I - fitting for {}]'.format( args.code ))
-    classifier = lkest.SNPLikelihoodEstimator()
-    classifier.fit(haplotypes, group_keys)
-    profile = classifier.get_profile()
-    profile.positions = region.P
-    profile.code = args.code
-    profile.remark = args.remark
-
-    try:
-        with open(args.profile, 'rb') as f:
-            profiles = pickle.load( f )
-    except FileNotFoundError:
-        profiles = {}
-    if args.code in profiles and not args.replace:
-        cexit('ERR: cannot replace ')
-    profiles[args.code] = profile.to_dict()
-    with open(args.profile, 'wb') as f:
-        pickle.dump( profiles, f)
-
-    cerr('[I - profiles saved to {}]'.format( args.profile ))
+ALLELE_TYPE = 2
 
 
-def main( args ):
+def train(args):
 
-    train( args )
+    # read position file as pandas dataframe
+    positions = pd.read_table(args.posfile)
+
+    # create vectorizer instance
+    vectorizer = GenotypeVectorizer(positions, allele_type=ALLELE_TYPE)
+
+    # read training barcode
+    train_barcodes, train_Y = read_barcode(args.infile, read_class=args.classfile is None)
+    train_X, train_mask = vectorizer.vectorize(train_barcodes)
+
+    # read training class file and replace train_Y, if necessary
+    if args.classfile:
+        train_Y = []
+        with open(args.classfile) as fin:
+            for line in fin:
+                train_Y.append(line.strip())
+        train_Y = np.array(train_Y)
+
+    clf = BialleleLK()
+    clf.fit(train_X, train_Y)
+
+    jlib.dump((vectorizer, clf), args.outfile)
+    cerr(f'[INFO - writing classifier to {args.outfile}]')
 
 
+def main(args):
+    train(args)
 
+# EOF
