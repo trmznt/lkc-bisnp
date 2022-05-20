@@ -5,9 +5,9 @@
     Colombia, Ethiopia, India, Indonesia, Iran, Madagascar, Malaysia, Mexico, Myanmar, Papua New Guinea, Peru, Sudan,
     Thailand, Vietnam.
 
-<form action='/run' method='POST'>
-    <div class="form-group">
-        <label for="BarcodeData">Please enter the data with the following format: SNP_Barcode&lt;tab&gt;Sample_ID</label>
+<form action='/run' method='POST' enctype="multipart/form-data">
+    <div class="mb-3">
+        <label for="BarcodeData">Please enter the data according to Data Format:</label>
         <textarea class="form-control rounded-0" id="BarcodeData" name="BarcodeData" rows="10" style="font-family: 'Cousine', monospace;">
 CGGTTAATTACCGGGGGCACGGCCTGCTGCGCA	Colombia-1
 CGTTTAGGTTTCGTGGGCACGGCCAGCAGCGTT	Myanmar-1
@@ -16,16 +16,36 @@ CGGCTAATTACCGTGGCACGGCCTGCATCGCA	Wrong_BarcodeLength
         </textarea>
     </div>
 
-    <div class="form-group">
-        <label for="Classifier">Classifier</label>
-        <select class="form-control" id="Classifier" name="Classifier">
-            <option value="0">Biallele Likelihood with SNP-33</option>
-            <option value="1">Biallele Likelihood with 72 SNPs (31 GEO + 41 VN Antwerp)</option>
-            <option value="2">BernoulliNB with Broad-37 SNPs (hets treated as missing SNPs)</option>
+    <div class="mb-3">
+        <b>- or -</b>
+    </div>
+
+    <div class="mb-3">
+        <label for="InFile" class="form-label">Input file</label>
+        <input class="form-control" type="file" id="InFile" name="InFile">
+    </div>
+
+    <div class="mb-3">
+        <label for="DataFormat">Data Format</label>
+        <select class="form-select" id="DataFormat" name="DataFormat">
+            <option value="txt-bts">Text with snp_barcode&lt;tab&gt;sample_id</option>
+            <option value="txt-stb">Text with sample_id&lt;tab&gt;snp_barcode</option>
+            <option value="csv">CSV/TSV ~ comma or tab separated value with SAMPLES and CHROM:POS header</option>
         </select>
     </div>
 
-    <button type="submit" class="btn btn-primary">Run classifier</button>
+    <div class="mb-3">
+        <label for="Classifier">Classifier</label>
+        <select class="form-select" id="Classifier" name="Classifier">
+            % for key, clf in sorted(classifiers.items()):
+                <option value="${key}">${clf[0]}</option>
+            % endfor
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <button type="submit" class="btn btn-primary">Run classifier</button>
+    </div>
 
 </form>
 
