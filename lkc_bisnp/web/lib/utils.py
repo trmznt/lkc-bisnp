@@ -20,4 +20,9 @@ def get_classifier(idx):
     global CLASSIFIERS_
     return CLASSIFIERS_[int(idx)]
 
+
+def get_all_classifiers():
+    global CLASSIFIERS_
+    return CLASSIFIERS_
+
 # EOF
