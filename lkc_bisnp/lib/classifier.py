@@ -53,7 +53,7 @@ class NaNBinomialNB(BernoulliNB, _MethodExt):
     def _init_counters(self, n_classes, n_features):
         super()._init_counters(n_classes, n_features)
         self.data_count_ = np.zeros((n_classes, n_features), dtype=np.int32)
-        if self.drop_coeff:
+        if not self.drop_coeff:
             self.log_binomial_coeff_ = np.log(
                 np.array([math.comb(self.binomial_n_, k)
                          for k in range(0, self.binomial_n_ + 1)])
@@ -116,7 +116,7 @@ class NaNBinomialNB(BernoulliNB, _MethodExt):
             jll += np.array([self.log_binomial_coeff_[np.nan_to_num(X, 0).astype(int)].sum(axis=1)]).T
 
         if self.fit_prior is True:
-            jil += self.class_log_prior_
+            jll += self.class_log_prior_
 
         return jll.filled()
 
