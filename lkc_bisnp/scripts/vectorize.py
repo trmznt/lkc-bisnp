@@ -27,10 +27,10 @@ def vectorize(args):
     (vectorizer, clf) = jlib.load(args.jlibfile)
 
     # preprocess input barcode and perform prediction
-    input_X, input_mask, logs = vectorizer.vectorize(input_barcodes)
+    input_data = vectorizer.vectorize(input_barcodes)
 
     if args.outfile:
-        np.savetxt(args.outfile, input_X)
+        np.savetxt(args.outfile, input_data.X)
         cerr(f'[INFO - vector is written to {args.outfile}]')
 
 
