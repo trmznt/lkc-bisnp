@@ -28,9 +28,10 @@ CGGCTAATTACCGTGGCACGGCCTGCATCGCA	Wrong_BarcodeLength
     <div class="mb-3">
         <label for="DataFormat">Data Format</label>
         <select class="form-select" id="DataFormat" name="DataFormat">
-            <option value="txt-bts">Text with snp_barcode&lt;tab&gt;sample_id</option>
-            <option value="txt-stb">Text with sample_id&lt;tab&gt;snp_barcode</option>
-            <option value="csv">CSV/TSV ~ comma or tab separated value with SAMPLES and CHROM:POS header</option>
+            <%! from lkc_bisnp.web.lib.utils import data_formats %>
+            % for key, text in data_formats:
+                <option value="${key}">${text}</option>
+            % endfor
         </select>
     </div>
 

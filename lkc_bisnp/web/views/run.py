@@ -4,9 +4,9 @@ import io
 import pandas as pd
 
 from pyramid.view import view_config
-from pyramid.httpexceptions import HTTPFound
+from pyramid.httpexceptions import HTTPFound, HTTPInternalServerError
 
-from lkc_bisnp.web.lib.utils import get_classifier
+from lkc_bisnp.web.lib.utils import get_classifier, preprocess_input
 
 
 @view_config(route_name='run', renderer='../templates/run.mako')
@@ -26,26 +26,8 @@ def run(request):
     else:
         instream = input_file.file
     
+    sample_ids, barcodes = preprocess_input(instream, data_fmt)
     code, vectorizer, classifier = get_classifier(clf_idx)
-
-    # convert data to 0-1-2 values
-    match data_fmt:
-        case 'txt-bts':
-            data = [line.strip().split('\t') for line in instream if line.strip()]
-            barcodes = [x[0] for x in data]
-            sample_ids = [x[1] for x in data]
-        case 'txt-stb':
-            data = [line.strip().split('\t') for line in instream if line.strip()]
-            barcodes = [x[1] for x in data]
-            sample_ids = [x[0] for x in data]           
-        case 'csv' | 'tsv':
-            data = pd.read_table(instream, sep=None, engine='python')
-            sample_ids = data.iloc[:, 0]
-            barcodes = data.iloc[:, 1:]
-        case _:
-            pass
-
-
     data = vectorizer.vectorize(barcodes)
 
     predictions, probas = classifier.predict_proba_partition(data.X, 3)
@@ -63,12 +45,4 @@ def run(request):
 
     return {'table': table, 'code': code}
 
-    raise RuntimeError
-
-    # perform classification
-
-    # return results
-
-    results = None
-
-    return {'results': results}
+# EOF
