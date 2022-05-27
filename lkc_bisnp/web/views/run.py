@@ -1,10 +1,8 @@
 
 import io
 
-import pandas as pd
-
 from pyramid.view import view_config
-from pyramid.httpexceptions import HTTPFound, HTTPInternalServerError
+from pyramid.httpexceptions import HTTPFound
 
 from lkc_bisnp.web.lib.utils import get_classifier, preprocess_input
 
