@@ -185,7 +185,7 @@ class GenotypeVectorizer(object):
                     else:
                         arr[i, j] = np.nan
                         mask[i, j] = True
-                        cerr(f'Masked for position: {self.notations.iloc[indexes[j]]} with allel: {a}')
+                        cerr(f'Masked for position: {self.notations.iloc[j]} with allel: {a}')
                         #assert 0
 
         return VectorData(X=arr, mask=mask, count=count, hets=hets, miss=miss,
