@@ -168,7 +168,23 @@ def cross_validate(clf, X, y, cv, n_jobs=1):
             for fold_id, (train, test) in enumerate(cv.split(X, y))
         )
 
-    return results
+    return pd.concat(results)
+
+
+def cross_val_predict(clf, X, y, cv, n_jobs):
+
+    # check suitability of X and y for k_fold
+    X, y = prepare_stratified_samples(X, y, cv.get_n_splits() / cv.n_repeats)
+
+    aggregate_preds = []
+    from sklearn.model_selection import cross_val_predict as cvp
+    splits = list(cv.split(X, y))
+    kfold = cv.get_n_splits() // cv.n_repeats
+    for i in range(0, len(splits), kfold):
+        y_preds = cvp(clf, X, y, cv=splits[i:i + kfold], n_jobs=n_jobs)
+        aggregate_preds.append(pd.DataFrame({'LABEL': y, 'PREDICTION': y_preds}))
+
+    return pd.concat(aggregate_preds)
 
 
 def prepare_stratified_samples(X, y, k_fold):
