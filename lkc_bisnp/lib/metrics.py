@@ -158,15 +158,18 @@ def cross_validate(clf, X, y, cv, n_jobs=1):
 
     # iterating over split data, this can be parallelized
 
+    cerr(f'[I - cross-validating with n_jobs={n_jobs}]')
     if n_jobs == 1:
         results = [fit_and_score(clone(clf), X, y, train, test, fold_id)
                    for fold_id, (train, test) in enumerate(cv.split(X, y))]
 
     else:
-        results = jlib.Parallel(n_jobs=n_jobs)(
-            jlib.delayed(fit_and_score)(clone(clf), X, y, train, test, fold_id)
-            for fold_id, (train, test) in enumerate(cv.split(X, y))
-        )
+        from tqdm_joblib import tqdm_joblib, tqdm
+        with tqdm_joblib(tqdm(desc='Cross-Validating', total=cv.get_n_splits())) as progress_bar:
+            results = jlib.Parallel(n_jobs=n_jobs)(
+                jlib.delayed(fit_and_score)(clone(clf), X, y, train, test, fold_id)
+                for fold_id, (train, test) in enumerate(cv.split(X, y))
+            )
 
     return pd.concat(results)
 
