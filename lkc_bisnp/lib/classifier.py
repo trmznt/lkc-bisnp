@@ -52,10 +52,18 @@ class NaNBinomialNB(BernoulliNB, _MethodExt):
             )
 
     def _check_X(self, X):
+        # check X doesn't have value > binomial_n
+        if np.any(X > self.binomial_n_):
+            raise ValueError(f'any of X values cannot exceed n={self.binomial_n_}')
+
         # allow for NaN (missing values)
         return self._validate_data(X, accept_sparse='csr', reset=False, force_all_finite=False)
 
     def _check_X_y(self, X, y, reset=True):
+        # check X doesn't have value > binomial_n
+        if np.any(X > self.binomial_n_):
+            raise ValueError(f'any of X values cannot exceed n={self.binomial_n_}')
+
         # allow for NaN (missing values)
         return self._validate_data(X, y, accept_sparse="csr", reset=reset, force_all_finite=False)
 
