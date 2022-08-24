@@ -220,4 +220,52 @@ def prepare_stratified_samples(X, y, k_fold):
 
     return (X, y)
 
+
+def create_missingness(X, proportion, seed=None, missing_value=np.nan):
+
+    if proportion <= 0:
+        return X
+
+    item_len = X.shape[1]
+    miss_len = round(item_len * proportion)
+    miss_mask = np.array([True] * miss_len + [False] * (item_len - miss_len))
+
+    miss_X = np.copy(X)
+
+    rng = np.random.default_rng(seed)
+    for i in range(0, X.shape[0]):
+        rng.shuffle(miss_mask)
+        miss_X[i][miss_mask] = missing_value
+
+    return miss_X
+
+
+class RandomSampler(object):
+
+    def __init__(self, X, y, seed=None, name=''):
+        """ note: use identical seed to obtain the same sampling results across
+            different runs
+        """
+
+        self.X = X
+        self.y = y
+        self.rng = np.random.default_rng(seed)
+        self.name = name
+
+        # generate labels -> index
+        self.y2idx = {}
+        for i, l in enumerate(self.y):
+            try:
+                self.y2idx[l].append(i)
+            except KeyError:
+                self.y2idx[l] = [i]
+
+    def stratified_random_choice(self, size):
+
+        indexes = []
+        for label in self.y2idx:
+            indexes.append(self.rng.choice(self.y2idx[label], size=size))
+
+        return np.concatenate(indexes)
+
 # EOF
